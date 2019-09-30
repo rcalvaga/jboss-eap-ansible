@@ -1,9 +1,9 @@
 ---
 - name: Copy application WAR file to host
-  get_url: url=http://10.15.39.100/wars/shcp.war dest=/tmp
+  get_url: url=http://{{ GET_WAR_HOST }}/wars/test.war dest=/tmp
 
 - name: Deploy SHCP to JBoss
-  jboss: deploy_path=/usr/share/jboss-eap/standalone/deployments/ src=/tmp/shcp.war deployment=shcp.war state=present
+  jboss: deploy_path=/usr/share/jboss-eap/standalone/deployments/ src=/tmp/test.war deployment=test.war state=present
   
 - name: restart jboss
   service: name=jboss-eap-rhel state=restarted
