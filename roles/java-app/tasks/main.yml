@@ -1,13 +1,13 @@
 ---
 - name: Copy application WAR file to host
   get_url: 
-    url: "http://{{ jboss_war_repo }}/wars/{{ jboss_war_name }}.war" 
+    url: http://{{ jboss_war_repo }}/wars/{{ jboss_war_name }}.war 
     dest: /tmp
 
 - name: Deploy SHCP to JBoss
   jboss: 
     deploy_path: /usr/share/jboss-eap/standalone/deployments/ 
-    src: "/tmp/{{ jboss_war_name }}.war" 
+    src: /tmp/{{ jboss_war_name }}.war 
     deployment: "{{ jboss_war_name }}.war" 
     state: present
   
