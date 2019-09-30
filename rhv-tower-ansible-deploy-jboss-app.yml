@@ -1,5 +1,5 @@
 ---
-- name: Deploy SHCP App on JBoss EAP
+- name: Deploy App on JBoss EAP
   hosts: all
   
   roles:
