@@ -1,4 +1,6 @@
 ---
 - name: Use Repos Template
-  template: src=lab.repo dest=/etc/yum.repos.d
+  template: 
+    src: lab.repo 
+    dest: /etc/yum.repos.d
 
