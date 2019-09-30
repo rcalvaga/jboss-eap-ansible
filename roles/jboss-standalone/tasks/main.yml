@@ -1,6 +1,8 @@
 ---
 - name: Install Java 1.8 and some basic dependencies
-  yum: name={{item}} state=present
+  yum: 
+    name: "{{ item }}" 
+    state: present
   with_items:
    - unzip
    - java-1.8.0-openjdk
@@ -9,59 +11,95 @@
    - libsemanage-python
 
 - name: Download JBoss EAP from REPO
-  get_url: url=http://10.15.39.100/wars/jboss-eap-7.2.0.zip dest=/opt/jboss-eap-7.2.0.zip
+  get_url: 
+    url: http://{{ jboss_war_repo }}/wars/jboss-eap-7.2.0.zip 
+    dest: /opt/jboss-eap-7.2.0.zip
   register: result
   until: result is success
   retries: 5
   delay: 10
   
 - name: Extract JBoss EAP Zip archive
-  unarchive: dest=/usr/share src=/opt/jboss-eap-7.2.0.zip creates=/usr/share/jboss-eap copy=no
+  unarchive: 
+    dest: /usr/share src=/opt/jboss-eap-7.2.0.zip 
+    creates: /usr/share/jboss-eap copy=no
  
 - name: Rename install directory
-  command: chdir=/usr/share /bin/mv jboss-eap-7.2 jboss-eap creates=/usr/share/jboss-eap
+  command: 
+    chdir: /usr/share /bin/mv jboss-eap-7.2 jboss-eap 
+    creates: /usr/share/jboss-eap
 
 - name: Copy JBoss Config File
-  copy: src=jboss-eap.conf dest=/etc/default
+  copy: 
+    src: jboss-eap.conf 
+    dest: /etc/default
 
 - name: Copying standalone.xml configuration file
-  template: src=standalone.xml dest=/usr/share/jboss-eap/standalone/configuration/
+  template: 
+    src: standalone.xml 
+    dest: /usr/share/jboss-eap/standalone/configuration/
   
 - name: Adding JBoss EAP 7 Admin User
-  template: src=mgmt-users.properties dest=/usr/share/jboss-eap/standalone/configuration/mgmt-users.properties
+  template: 
+   src: mgmt-users.properties 
+   dest: /usr/share/jboss-eap/standalone/configuration/mgmt-users.properties
 
 - name: Add group "jboss"
-  group: name=jboss
+  group: 
+    name: jboss
 
 - name: Add user "jboss"
-  user: name=jboss group=jboss home=/usr/share/jboss-eap
+  user: 
+    name: jboss 
+    group: jboss 
+    home: /usr/share/jboss-eap
 
 - name: Copy the init script
-  copy: src=jboss-eap-rhel.sh dest=/etc/init.d/jboss-eap-rhel.sh mode=0755
+  copy: 
+    src: jboss-eap-rhel.sh 
+    dest: /etc/init.d/jboss-eap-rhel.sh 
+    mode: 0755
 
 - name: Create path for PostgreSQL JDBC Driver
-  file: path=/usr/share/jboss-eap/modules/system/layers/base/org/postgresql/main state=directory owner=jboss group=jboss recurse=yes 
+  file: 
+    path: /usr/share/jboss-eap/modules/system/layers/base/org/postgresql/main 
+    state: directory 
+    owner: jboss 
+    group: jboss 
+    recurse: yes 
 
 - name: Copying module.xml for PostgreSQL JDBC Driver
-  template: src=module.xml dest=/usr/share/jboss-eap/modules/system/layers/base/org/postgresql/main/module.xml
+  template: 
+    src: module.xml 
+    dest: /usr/share/jboss-eap/modules/system/layers/base/org/postgresql/main/module.xml
 
 - name: Download PostgreSQL JDBC Driver
-  get_url: url=http://10.15.39.100/wars/{{ postgresql_driver }} dest=/usr/share/jboss-eap/modules/system/layers/base/org/postgresql/main/
+  get_url: 
+    url: http://{{ jboss_war_repo }}/wars/{{ postgresql_driver }} 
+    dest: /usr/share/jboss-eap/modules/system/layers/base/org/postgresql/main/
   
 - name: Change ownership of JBoss EAP installation
-  file: path=/usr/share/jboss-eap/ owner=jboss group=jboss state=directory recurse=yes
+  file: 
+    path: /usr/share/jboss-eap/ 
+    owner: jboss group=jboss 
+    state: directory 
+    recurse: yes
 
 - name: Add the new jboss-eap-rhel.sh service to list of automatically
   command: /sbin/chkconfig --add jboss-eap-rhel.sh
 
 - name: Start JBoss EAP Service 
-  service: name=jboss-eap-rhel state=started
+  service: 
+    name: jboss-eap-rhel 
+    state: started
 
 - name: Enable JBoss EAP Service to be started at boot
   command: /sbin/chkconfig jboss-eap-rhel.sh on
 
 - name: Ensure that firewalld is installed
-  yum: name=firewalld state=present
+  yum: 
+    name: firewalld 
+    state: present
 
 - name: Ensure that firewalld is started
   service: name=firewalld state=started
