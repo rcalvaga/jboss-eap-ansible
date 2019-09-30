@@ -1,0 +1,8 @@
+---
+- name: Deploy SHCP App on JBoss EAP
+  hosts: all
+  
+  roles:
+   - common
+   - jboss-standalone
+   - java-app
