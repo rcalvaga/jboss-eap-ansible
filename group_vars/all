@@ -5,6 +5,7 @@ mgmt_port: 9990
 postgresql_driver: postgresql-42.2.5.jar
 jboss_war_repo: 1.2.3.4
 rhel_repo: 1.2.3.4
+jboss_war_name: test
 
 # Variables listed here are applicable to all host groups
 wp_version: 4.6
